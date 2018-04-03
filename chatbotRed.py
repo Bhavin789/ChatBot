@@ -24,6 +24,30 @@ def find_parent(pid):
         #print(str(e))
         return False
 
+def find_existing_score(pid):
+    try:
+        sql = "SELECT score FROM parent_reply WHERE parent_id = '{}' LIMIT 1".format(pid)
+        c.execute(sql)
+        result = c.fetchone()
+        if result != None:
+            return result[0]
+        else: return False
+    except Exception as e:
+        #print(str(e))
+        return False
+
+def acceptable(data):
+    if len(data.split(' ')) > 50 or len(data) < 1:
+        return False
+    elif len(data) > 1000:
+        return False
+    elif data == '[deleted]':
+        return False
+    elif data == '[removed]':
+        return False
+    else:
+        return True
+
 def create_table():
     c.execute("CREATE TABLE IF NOT EXISTS parent_reply(parent_id TEXT PRIMARY KEY, comment_id TEXT UNIQUE, parent TEXT, comment TEXT, subreddit TEXT, unix INT, score INT)")
 
@@ -46,3 +70,16 @@ if __name__ == '__main__':
             parent_data = find_parent(parent_id)
             if row_counter < 2:
                 print(row)
+
+            if score > 2:
+                existing_comment_score = find_existing_score(parent_id)
+                if existing_comment_score:
+                    if score > existing_comment_score:
+
+
+
+
+
+
+
+
